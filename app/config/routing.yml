@@ -1,0 +1,4 @@
+rocket_route_port:
+    resource: "@RocketRoutePortBundle/Resources/config/routing.yml"
+    prefix:   /
+

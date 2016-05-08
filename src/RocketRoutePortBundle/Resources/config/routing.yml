@@ -1,0 +1,7 @@
+index:
+    path:     /
+    defaults: { _controller: rocket_route_notam_controller:indexAction }
+
+ajax_request:
+    path:     /ajax/request
+    defaults: { _controller: rocket_route_notam_controller:ajaxAction }

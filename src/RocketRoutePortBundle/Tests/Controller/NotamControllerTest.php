@@ -1,0 +1,16 @@
+<?php
+
+namespace RocketRoutePortBundle\Tests\Controller;
+
+use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+
+class NotamControllerTest extends WebTestCase
+{
+    public function testIndex()
+    {
+        $client = static::createClient();
+
+        $crawler = $client->request('GET', 'notam');
+    }
+
+}

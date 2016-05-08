@@ -1,0 +1,26 @@
+parameters:
+
+
+services:
+    rocket_route_port.notam_service:
+        class: RocketRoutePortBundle\Service\NotamService
+        arguments:
+            - 'https://apidev.rocketroute.com/notam/v1/service.wsdl'
+            - '%rocket_route_api_username%'
+            - '%rocket_route_api_password%'
+        calls:
+          - [ setNodtamDecoder, ['@rocket_route_port.notam_decoder_service']]
+    rocket_route_port.notam_decoder_service:
+        class: RocketRoutePortBundle\Service\NotamDecoderService
+        arguments:
+            - '@service_container'
+    rocket_route_notam_controller:
+        class: RocketRoutePortBundle\Controller\NotamController
+        arguments:
+            - '@rocket_route_port.notam_service'
+            - '@rocket_route_port.notam_decoder_service'
+        calls:
+            - [ setContainer, ['@service_container'] ]
+
+
+
