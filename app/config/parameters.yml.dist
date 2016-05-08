@@ -15,8 +15,8 @@ parameters:
     mailer_user:       ~
     mailer_password:   ~
     rocket_route_api_key: ~
-    rocket_route_api_username:~
-    rocket_route_api_password:~
+    rocket_route_api_username: ~
+    rocket_route_api_password: ~
 
     # A secret key that's used to generate certain security-related tokens
     secret:            ThisTokenIsNotSoSecretChangeIt
