@@ -28,7 +28,7 @@ class NotamDecoderService {
 
 		$notamArray = [];
 
-		
+
 
 		if (isset( $notam['ItemQ'] )) {
 
@@ -123,10 +123,9 @@ class NotamDecoderService {
 
 			$hour2 = substr(substr( $geoLocation, - 3 ), 0 , -1);
 
+			$geoLocation = substr(substr( $geoLocation, 0, - 3 ), 1 , 3);
 
-			$geoLocation = substr(substr( $geoLocation, 0, - 3 ), 1 , 2);
-
-			$degree2 = substr($geoLocation, 1);
+			$degree2 = $geoLocation;
 
 			//Equate Longitude and Latitude
 			$latitude = $degree1 + $hour1 / 60;
