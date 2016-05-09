@@ -14,10 +14,10 @@
 
                 <div class="masthead clearfix">
                     <div class="inner">
-                        <h1 class="masthead-brand">NOTAM Search</h1>
+                        <h1 class="masthead-brand">notam search</h1>
                         <nav>
                             {#<ul class="nav masthead-nav">#}
-                                {#<li class="active"><a href="#">Home</a></li>#}
+                                {#<li class="active"><a href="#">home</a></li>#}
                             {#</ul>#}
                         </nav>
                     </div>
@@ -28,10 +28,10 @@
                         <form id="icao-form">
                             <div class="form-group">
 
-                                <label for="icao-code">ICAO code</label>
-                                <input type="text" class="form-control icao-search" id="icao-code" placeholder="Input ICAO code">
+                                <label for="icao-code">icao code</label>
+                                <input type="text" class="form-control icao-search" id="icao-code" placeholder="input icao code">
                             </div>
-                            <button type="submit" class="btn btn-default">Search</button>
+                            <button type="submit" class="btn btn-default">search</button>
                         </form>
                     </div>
                     <div class="col-md-6">
@@ -65,24 +65,29 @@
         var map;
         var service;
         var infowindow;
+        var markers = [];
 
         function initialize() {
-            var pyrmont = new google.maps.LatLng(51.0333333333,-0.366666666667);
+            var LatLng = new google.maps.LatLng(51.0333333333,-0.366666666667);
 
             map = new google.maps.Map(document.getElementById('map'), {
-                center: pyrmont,
+                center: LatLng,
                 zoom: 15
             });
 
 
         }
 
-        function callback(results, status) {
-            if (status == google.maps.places.PlacesServiceStatus.OK) {
-                for (var i = 0; i < results.length; i++) {
-
-                }
+        // Sets the map on all markers in the array.
+        function setMapOnAll(map) {
+            for (var i = 0; i < markers.length; i++) {
+                markers[i].setMap(map);
             }
+        }
+
+        // Removes the markers from the map, but keeps them in the array.
+        function clearMarkers() {
+            setMapOnAll(null);
         }
 
         $(function() {
@@ -95,48 +100,69 @@
 
                 if (icaoCode) {
 
+                    clearMarkers();
+
                     $.ajax({
                             method: "POST",
-                            url: "/app_dev.php/ajax/request",
+                            url: "/ajax/request",
                             dataType: 'json',
                             data: {icaoSearch: 1, icaoCode: icaoCode}
                         })
                         .done(function (json) {
-                            $.each(json, function(idx, notam){
 
-                                var i = 1;
-                                $.each(notam, function(key, result) {
+                            if (Object.keys(json).length) {
 
-                                    var latLong = new google.maps.LatLng(result.itemQ.latitude,result.itemQ.longitude);
+                                $.each(json, function (idx, notam) {
 
-                                    if (i == 1){
-                                        map.setZoom(10);
-                                        map.panTo(latLong);
-                                    }
+                                    var mapCenter = false;
 
-                                    var marker = new google.maps.Marker({
-                                        position: latLong,
-                                        map: map,
-                                        title: result.itemA,
-                                        icon: 'http://i68.tinypic.com/fn8snm.png'
+
+                                    $.each(notam, function (key, result) {
+
+                                        var latLong = new google.maps.LatLng(result.itemQ.latitude, result.itemQ.longitude);
+
+                                        if (mapCenter == false) {
+                                            map.setZoom(10);
+                                            map.panTo(latLong);
+                                        }
+
+                                        var marker = new google.maps.Marker({
+                                            position: latLong,
+                                            map: map,
+                                            title: result.itemA,
+                                            icon: 'http://i68.tinypic.com/fn8snm.png'
+                                        });
+
+                                        var content = '<p style="color: #000;">' + result.itemE + '</p>'
+
+                                        var infowindow = new google.maps.InfoWindow({
+                                            content: content
+                                        });
+
+
+                                        marker.addListener('click', function () {
+                                            infowindow.open(map, marker);
+                                        });
+
+                                        markers.push(marker);
+
+                                        mapCenter = true;
+
                                     });
-
-                                    var content = '<p style="color: #000;">' + result.itemE+ '</p>'
-
-                                    var infowindow = new google.maps.InfoWindow({
-                                        content: content
-                                    });
-
-                                    marker.addListener('click', function() {
-                                        infowindow.open(map, marker);
-                                    });
-
-                                    i++;
 
 
                                 });
 
-                            });
+                            }else{
+
+
+                                alert('No NOTAMS found from ICAO code '+ icaoCode);
+
+
+                            }
+
+
+
                         });
 
                 }
